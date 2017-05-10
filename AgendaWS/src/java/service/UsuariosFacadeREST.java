@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import entities.Usuarios;
@@ -11,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,7 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
+import javax.persistence.NoResultException;
 
 @javax.ejb.Stateless
 @Path("usuarios")
@@ -62,6 +58,26 @@ public class UsuariosFacadeREST extends AbstractFacade<Usuarios> {
     }
 
     @GET
+    @Path("validarUsuario/{correo}")
+    //@Produces(MediaType.APPLICATION_JSON)
+    public Boolean validarUsuario(@PathParam("correo") String correo) {
+
+        Query query = getEntityManager().createQuery("SELECT u FROM Usuarios u WHERE u.correo = :correo");
+        query.setParameter("correo", correo);
+
+        Boolean esValido;
+        try {
+            Usuarios usuario = (Usuarios) query.getSingleResult();
+            esValido = true;
+        } catch (NoResultException e) {
+            // No se encuentra el usuario según el correo
+            esValido = false;
+        }
+
+        return esValido;
+    }
+
+    @GET
     @Override
     @Produces(MediaType.APPLICATION_JSON)
     public List<Usuarios> findAll() {
@@ -94,5 +110,5 @@ public class UsuariosFacadeREST extends AbstractFacade<Usuarios> {
 
         return entityManager;
     }
-    
+
 }
