@@ -3,6 +3,9 @@ package py.una.pol.is2.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +17,7 @@ public class DBUtils {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DBUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         /* credenciales de conexión a la DB */
         // TODO hacer que esto sea configurable en algún XML
         String username = "postgres";
@@ -36,4 +39,21 @@ public class DBUtils {
             }
         }
     }
+
+    public static java.sql.Date toSqlDate(String dateStr) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+
+            Date date = formatter.parse(dateStr);
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+            return sqlDate;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
 }
